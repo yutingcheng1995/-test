@@ -1,4 +1,4 @@
-Interface Stack<E>{
+interface Stack<E>{
     public int getSize();
     public boolean isEmpty();
     public void push(E e);
