@@ -1,0 +1,84 @@
+class LinkedListQueue<E> {
+//在链表中加入尾节点实现队列；
+    private class Node<E>{
+       public E e;
+       public Node next;
+       public Node(E e, Node next){
+           this.e = e;
+           this.next = next;
+       }
+       public Node(E e){
+           this(e,null);
+       }
+       public Node(){
+           this(null,null);
+       }
+       public String toString(){
+           return e.toString();
+       }
+    }
+    private Node head;
+    private Node tail;
+    private int size;
+    public LinkedListQueue(){
+        head = null;
+        tail = null;
+        size = 0;
+    }
+    
+    public int getSize(){
+        return size;
+    }
+    public boolean isEmpty(){
+        return size == 0;
+    }
+    
+    public void enqueue(E e){
+        if(tail == null)
+        {
+            tail = new Node(e);
+            head = tail;
+        }//队列为空
+        else{
+         tail.next = new Node(e);
+         tail = tail.next;
+        }
+        size++;
+    }
+    
+    public E dequeue(){
+        if(isEmpty()){
+            throw new IllegalArgumentException("Illegal Dequeue!");
+        }//判断队列是否为空
+        Node ret = head;
+        head = head.next;
+        ret.next = null;//将ret节点放弃
+        if(head==null){
+            tail = null;
+        }//如果队列此时为空
+        size--;
+        return (E)ret.e;
+    }
+    
+    public E getFront(){
+        if(isEmpty()){
+            throw new IllegalArgumentException("Illegal Dequeue!");
+        }
+        return (E)head.e;
+    }
+    
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        Node cur = head;
+        res.append("Queue: front[");
+        for(int i = 0; i < size; i++){
+           res.append(cur.e);
+           if(i!= size-1){
+               res.append(", ");
+           }
+           cur = cur.next;
+        }
+        res.append("]tail");
+        return res.toString();
+    }  
+}
