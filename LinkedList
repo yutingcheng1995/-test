@@ -1,0 +1,133 @@
+import java.io.*;
+class LinkedList<E>{
+    private class Node<E>{
+       public E e;
+       public Node next;
+       public Node(E e, Node next){
+           this.e = e;
+           this.next = next;
+       }
+       public Node(E e){
+           this(e,null);
+       }
+       public Node(){
+           this(null,null);
+       }
+       public String toString(){
+           return e.toString();
+       }
+    }
+    
+    private Node dummyHead;
+    private int size;
+    
+    public LinkedList(){
+        //创建空链表时即创建一个空的头节点
+        dummyHead = new Node(null, null);
+        size = 0;
+    }//可设计其他构造方法，比如传进一个数组等
+    
+    public int getSize(){
+        return size;
+    }
+    
+    public boolean isEmpty(){
+        return size == 0;
+    }
+    
+    //在链表的第index（0）个位置添加,找到待添加节点
+    public void add(int index, E e){
+        if(index < 0 || index > size){
+        //index与size的大小与数组不同，数组不能等于size，index可以
+            throw new IllegalArgumentException("Illegal index!");
+        }
+        Node pre = dummyHead;
+        for(int i = 0; i < index ; i++){
+        //做index次求next
+             pre = pre.next;
+        }
+        Node node = new Node(e);//
+        node.next = pre.next;
+        pre.next = node;
+        size++;
+    }
+    
+    //在表头添加元素，表头为空节点
+    public void addFirst(E e){
+        add(0,e);
+    }
+    
+    //在链表末尾添加新的元素
+    public void addLast(E e){
+        add(size, e);
+    }
+    
+    //获取Index的元素
+    public E get(int index){
+      if(index < 0 || index >= size){
+        //index与size的大小与数组不同，数组不能等于size，index可以
+         throw new IllegalArgumentException("Illegal index!");
+      }
+      Node cur = dummyHead.next;
+      for(int i = 0; i < index; i++){
+          cur = cur.next;
+      }
+      return (E)cur.e;//此处在online编译器上需要强转！
+    }
+    
+    public E getFirst(){
+        return get(0);
+    }
+    
+    public E getLast(){
+        return get(size - 1);
+    }
+    
+    public void set(int index, E e){
+        if(index < 0 || index >= size){
+        //index与size的大小与数组不同，数组不能等于size，index可以
+         throw new IllegalArgumentException("Illegal index!");
+        }
+        Node cur = dummyHead.next;
+        for(int i = 0;i < index; i++){
+            cur = cur.next;
+        }
+        cur.e = e; 
+    }
+    
+    public boolean contains(E e){
+        Node cur = dummyHead.next;
+        while(cur != null){
+            if(cur.e.equals(e)){
+                return true;
+            }
+            cur = cur.next;
+        }
+        return false;
+    }
+    
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        Node cur = dummyHead.next;
+        while(cur!=null){
+            res.append(cur + "->");
+            cur = cur.next;
+        }
+        res.append("NULL");
+        return res.toString();
+    }
+    
+}
+public class MyClass {
+    public static void main (String[] args) throws java.lang.Exception
+	{
+		LinkedList<Integer> ll = new LinkedList<>();
+		for(int i = 0; i < 10; i++){
+		    ll.addFirst(i);
+		    System.out.println(ll);
+		}
+		ll.add(2,34);
+		System.out.println(ll);
+		
+	}
+}
