@@ -1,0 +1,30 @@
+class LinkedListStack<E>{
+    private LinkedList<E> ll;
+    
+    public LinkedListStack(){
+        ll = new LinkedList<>();
+    }
+    
+    public int getSize(){
+        return ll.getSize();
+    }
+    public boolean isEmpty(){
+        return ll.isEmpty();
+    }
+    public void push(E e){
+        ll.addFirst(e);
+    }
+    public E pop(){
+        return ll.removeFirst();
+    }
+    public E peek(){
+        return ll.getFirst();
+    }
+    
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        res.append("Stack: top");
+        res.append(ll);
+        return res.toString();
+    }
+}
