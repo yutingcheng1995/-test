@@ -3,7 +3,8 @@ import java.util.Stack;
 /**
 增加元素
 是否包含
-前序、中序、后序（递归、非递归）
+前序、中序、后序（递归、非递归），非递归借助栈实现
+广度优先遍历：层序遍历（非递归），借助队列实现
 */
 class BST<E extends Comparable<E>>{
     private class Node<E>{
@@ -128,6 +129,22 @@ class BST<E extends Comparable<E>>{
         postOrder(node.right);
 	System.out.println(node.e);
     }
+    
+        public void levelOrder(){
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            Node cur = queue.remove();
+            System.out.println(cur.e);
+            if(cur.left!=null){
+                queue.add(cur.left);
+            }
+            if(cur.right!=null){
+                queue.add(cur.right);
+            }
+        }
+    }
+    
     public String toString(){
         StringBuilder res = new StringBuilder();
         generateBSTString(root,0,res);
