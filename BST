@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.Stack;
 /**
-增加元素
+增加、删除元素
 是否包含
 前序、中序、后序（递归、非递归），非递归借助栈实现
 广度优先遍历：层序遍历（非递归），借助队列实现
@@ -145,6 +145,106 @@ class BST<E extends Comparable<E>>{
         }
     }
     
+    public E minimum(){
+        if(root == null){
+            throw new IllegalArgumentException("BST is empty!");
+        }
+        return (E)minimum(root).e;
+    }
+    
+    private Node minimum(Node node){
+        if(node.left == null){
+            return node;
+        }
+        return minimum(node.left);
+    }
+    
+    
+    public E maxmum(){
+        if(root == null){
+            throw new IllegalArgumentException("BST is empty!");
+        }
+        return (E)maxmum(root).e;
+    }
+    
+    private Node maxmum(Node node){
+        if(node.right == null){
+            return node;
+        }
+        return maxmum(node.right);
+    }
+    
+    public E removeMin(){
+        E ret = minimum();
+        root = removeMin(root);
+        return ret;
+    }
+    
+    private Node removeMin(Node node){
+        if(node.left == null){
+            Node rightNode = node.right;
+            node.right = null;
+            size--;
+            return rightNode;
+        }
+        node.left = removeMin(node.left);
+        return node;
+    }
+    
+    public E removeMax(){
+        E ret = maxmum();
+        root = removeMax(root);
+        return ret;
+    }
+    
+    private Node removeMax(Node node){
+        if(node.right == null){
+            Node leftNode = node.left;
+            node.left = null;
+            size--;
+            return leftNode;
+        }
+        node.right = removeMax(node.right);
+        return node;
+    }
+    
+    public void remove(E e){
+        root = remove(root,e);
+    }
+    
+    private Node remove(Node node, E e){
+        if(node == null){
+            return null;
+        }
+        if(e.compareTo(node.e) < 0){
+         node.left = remove(node.left,e);
+         return node;
+        }
+        else  if(e.compareTo(node.e) > 0){
+         node.right = remove(node.right,e);
+         return node;
+        }
+        else{
+            if(node.left == null){
+                Node rightNode = node.right;
+                node.right = null;
+                size--;
+                return rightNode;
+            }
+            if(node.right == null){
+                Node leftNode = node.left;
+                node.left = null;
+                size--;
+                return leftNode;
+            }
+            
+                Node successor = mininum(node.right);
+                successor.right = removeMin(node.right);
+                successor.left = node.left;
+                //size -- ;(removeMin已经--)
+                return successor;
+        }
+    }
     public String toString(){
         StringBuilder res = new StringBuilder();
         generateBSTString(root,0,res);
