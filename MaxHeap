@@ -1,4 +1,7 @@
 /**
+为了方便实现某些操作，在Array数组中添加方法
+     - swap函数，交换两个index处的元素；
+     - 增加一个构造方法，将输入数组赋值给当前数组（1.创建一个空的数组2.进行赋值3.更新size的值）
 二叉堆：（1）完全二叉树（2）父节点 >= all孩子节点（最大堆） || 父节点 <= all孩子节点（最小堆）
 底层实现：动态数组
 实现了类似队列的几个方法：
@@ -8,11 +11,21 @@ private: parent(index);leftChild(index);rightChild(index);siftUp(index);siftDown
 add(e):借助上浮函数实现，将新元素插入堆的尾部，将该元素上浮至适当位置（满足堆的基本性质）；
 extractMax():借助下沉函数实现，将堆首和堆尾交换位置，删除堆尾，将堆首元素下沉至适当位置（同上）；
 FindMax（）返回堆顶；
+replace(e):使用输入元素替换最大元素（1.暂存最大元素 2.将堆首设置为e 3.堆首下沉）
+heapify:将数组转化为堆数组，通过构造方法实现该属性（1.利用动态方法中的构造方法创建数组 2.找到最后一个非叶节点 3.从当前非叶节点下沉，直至堆首）
 堆本身是可以实现排序的；每次删除堆首直到空即可；
 */
 
 class MaxHeap<E extends Comparable<E>> {
     private Array<E> data;
+    
+    public MaxHeap(E[] arr){
+        data = new Array<>((E[])arr);
+        int index = parent(data.getSize()-1);
+        for(int i = index; i >= 0; i--){
+            siftDown(i);
+        }
+    }
     
     public MaxHeap(int capacity){
         data = new Array<E>(capacity);
@@ -89,6 +102,12 @@ class MaxHeap<E extends Comparable<E>> {
             }
             k = j;
         }
+    }
+    public E replace(E e){//替换最大
+        E ret = findMax();
+        data.set(0,e);
+        siftDown(0);
+        return ret;
     }
 }
 
