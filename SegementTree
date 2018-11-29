@@ -1,0 +1,173 @@
+import java.util.*;
+/**
+线段树：每个节点表示数组对应的一个区间
+底层实现：静态数组，当数组确定时，对应线段树的大小就确定了（n -> 4n）
+- getSize()
+- isEmpty()
+- get(index)
+- set(index,val):
+- query(queryL,queryR)
+*/
+interface Merger<E> {
+    E merge(E a, E b);
+}//设计一个函数，处理线段树中左右孩子节点与父节点直接的关系
+class SegementTree<E> {
+    
+    private E[] tree;
+    private E[] data;
+    private Merger<E> merger;//将merger作为一个变量，初始化时，为线段树定义特定的merger
+    
+    public SegementTree(E[] arr, Merger<E> merger) {
+        
+        this.merger = merger;
+       data = (E[]) new Object[arr.length];
+       for(int i = 0; i< arr.length; i++){
+           data[i] = arr[i];
+       }
+       tree = (E[]) new Object[ 4*arr.length ];
+       buildSegementTree(0,0,data.length-1);
+    }
+    
+    private void buildSegementTree(int treeIndex, int l, int r){
+        if(l == r){
+            tree[treeIndex] = data[l];
+            return;
+        }
+        
+        int leftTreeIndex  = leftChild(treeIndex);
+        int rightTreeIndex = rightChild(treeIndex);
+        
+        int mid = l + (r - l)/2;
+        buildSegementTree(leftChild(treeIndex),l,mid);
+        buildSegementTree(rightChild(treeIndex),mid+1,r);
+        
+        tree[treeIndex] = merger.merge(tree[leftTreeIndex], tree[rightTreeIndex]);
+    }
+    
+    public int getSize(){
+        return data.length;
+    }
+    
+    public E get(int index){
+        if(index < 0 || index >= data.length){
+            throw new IllegalArgumentException("Index is illegal");
+        }
+        return data[index];
+    }
+    
+    private int leftChild(int index){
+        return 2*index + 1;
+    }
+    
+     private int rightChild(int index){
+        return 2*index + 2;
+    }
+    
+    public void set(int index , E val){
+        if(index < 0 || index >= data.length){
+            throw new IllegalArgumentException("Index is illegal");
+        }
+        data[index] = val;
+        set(0,0,data.length-1,index,val);
+    }
+    
+    private void set(int treeIndex, int l, int r, int index, E val){
+        if(l == r){
+            tree[treeIndex] = val;
+            return ;
+        }   
+        
+        int mid = l + (r - l)/2;
+        int leftIndex = leftChild(treeIndex);
+        int rightIndex = rightChild(treeIndex);
+        if(index <= mid){
+            set(leftIndex, l ,mid, index,val);
+        }
+        else{
+            set(rightIndex, mid+1 ,r, index,val);
+        }
+        
+        tree[treeIndex] = merger.merge(tree[leftIndex],tree[rightIndex]);
+    }
+    
+    public E query(int queryL, int queryR){
+        if(queryL < 0 || queryR >= data.length || queryR < 0 || queryR >= data.length || queryL > queryR){
+            throw new IllegalArgumentException("Index is illegal");
+        }
+        
+        return query(0,0,data.length-1,queryL,queryR);
+          
+    }
+    
+    
+    private E query(int treeIndex, int l, int r, int queryL, int queryR){
+         if(l == queryL && r == queryR){
+             return tree[treeIndex];
+         } 
+         
+         int mid = l + (r - l)/2;
+         int leftIndex = leftChild(treeIndex);
+         int rightIndex = rightChild(treeIndex);
+         
+         if(queryL >= mid + 1){
+             return query(rightIndex,mid+1,r,queryL,queryR);
+         }
+         else if(queryR <= mid){
+             return query(leftIndex,l,mid,queryL,queryR);
+         }
+         E leftRes = query(leftIndex,l,mid,queryL,mid);
+         E rightRes = query(rightIndex,mid+1,r,mid+1,queryR);
+         return merger.merge(leftRes,rightRes);
+    }
+    
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        res.append('[');
+        for(int i = 0; i< tree.length; i++){
+            if(tree[i] != null){
+                res.append(tree[i]);
+            }
+            else{
+                res.append("null");
+            }
+            if(i!=tree.length - 1){
+                res.append(", ");
+            }
+        }
+        res.append(']');
+        return res.toString();
+    }
+}
+
+class NumArray{
+    
+    private SegementTree<Integer> segementTree;
+    
+    public NumArray(int[] nums){
+        if(nums.length > 0){
+            Integer[] data = new Integer[nums.length];
+            for(int i =0 ;i < nums.length; i++){
+                data[i] = nums[i];
+            }
+            segementTree = new SegementTree<>(data,(a,b)->a + b);
+        }
+    }
+    
+    public int sumRange(int i, int j){
+        return this.segementTree.query(i,j);
+    }
+}
+
+public class MyClass {
+    public static void main(String args[]) {
+        Integer[] nums = {-2,0,3,-5,2,-1};
+        SegementTree<Integer> segTree = new SegementTree<>(nums,new Merger<Integer>(){
+            public Integer merge(Integer a,  Integer b){
+                return a + b;
+            }
+        });
+         System.out.println(segTree);
+        segTree.set(2,5);
+        System.out.println(segTree);
+    }
+}
